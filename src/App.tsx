@@ -88,8 +88,24 @@ function App() {
           const text = await extractTextFromFile(file);
 
           // Determine file display path
-          // casting file to any to access path property if it exists (Electron)
-          const filePath = (file as any).path || file.webkitRelativePath || file.name;
+          let filePath = (file as any).path || file.webkitRelativePath || file.name;
+
+          // Electron: Try to get absolute path using webUtils (modern standard)
+          // @ts-ignore
+          if (window.require) {
+            try {
+              // @ts-ignore
+              const { webUtils } = window.require('electron');
+              const adminPath = webUtils.getPathForFile(file);
+              if (adminPath) {
+                filePath = adminPath;
+              }
+            } catch (e) {
+              console.warn("webUtils.getPathForFile failed", e);
+            }
+          }
+
+          console.log('Scanned file:', file.name, 'Path:', filePath);
 
           const occurrences = scanContent(text);
 
@@ -156,21 +172,25 @@ function App() {
     fileInputRef.current?.click();
   };
 
-  const openFile = (path: string) => {
+  const openFile = async (path: string) => {
     try {
-      // Electron specific: use ipcRenderer or remote, but since we are in a simple setup:
-      // We check if window.require is available (it is in Electron if nodeIntegration is on or contextIsolation is right)
-      // Otherwise we might need another way.
+      console.log('Attempting to open file at path:', path);
       // @ts-ignore
       if (window.require) {
         // @ts-ignore
         const { shell } = window.require('electron');
-        shell.openPath(path);
+        const error = await shell.openPath(path);
+        if (error) {
+          console.error("Electron shell.openPath error:", error);
+          alert(`Failed to open file: ${error}`);
+        }
       } else {
-        console.warn("Cannot open file: Electron shell not available");
+        console.warn("Electron shell is not available");
+        alert("Error: Electron environment not detected. Cannot open file.");
       }
     } catch (e) {
       console.error("Failed to open file", e);
+      alert(`Exception opening file: ${e}`);
     }
   };
 

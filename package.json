@@ -3,6 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "description": "A standalone text searching application",
+  "author": "Michael Stephens",
   "main": "dist-electron/main.js",
   "build": {
     "appId": "com.textsearcher.app",
