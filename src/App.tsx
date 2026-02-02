@@ -1,4 +1,5 @@
-import React, { useState, useRef, Component, ErrorInfo, ReactNode } from 'react';
+import React, { useState, useRef, Component } from 'react';
+import type { ErrorInfo, ReactNode } from 'react';
 import { Search, FolderUp, Hash, Trash2, CheckCircle2, AlertCircle, ChevronDown, ChevronRight, FileText, ExternalLink } from 'lucide-react';
 import { scanContent } from './utils/scanner';
 import type { Occurrence } from './utils/scanner';
