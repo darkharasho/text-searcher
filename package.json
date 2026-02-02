@@ -21,7 +21,10 @@
       "icon": "public/icon.icns"
     },
     "win": {
-      "target": "nsis"
+      "target": [
+        "nsis",
+        "portable"
+      ]
     }
   },
   "scripts": {
@@ -31,7 +34,8 @@
     "preview": "vite preview",
     "electron:dev": "concurrently -k \"cross-env BROWSER=none npm run dev\" \"npm run electron:start\"",
     "electron:start": "wait-on tcp:5173 && tsc -p electron/tsconfig.json && electron .",
-    "electron:build": "npm run build && electron-builder"
+    "electron:build": "npm run build && electron-builder",
+    "electron:build:win": "npm run build && electron-builder --win --x64"
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",
